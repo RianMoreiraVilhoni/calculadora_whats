@@ -1,0 +1,135 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Simulador de Consumo de Energia</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+    <!-- Menu Hamburguer -->
+    <nav class="navbar">
+        <input class="checkbox" type="checkbox" id="menu-toggle">
+        <label for="menu-toggle" class="menu-icon">&#9776;</label>
+
+        <ul class="menu">
+            <li><a href="#" onclick="alterarComodo('Sala')">Sala</a></li>
+            <li><a href="#" onclick="alterarComodo('Cozinha')">Cozinha</a></li>
+            <li><a href="#" onclick="alterarComodo('Banheiro')">Banheiro</a></li>
+            <li><a href="#" onclick="alterarComodo('Garagem')">Garagem</a></li>
+            <li><a href="#" onclick="alterarComodo('Área de Lazer')">Área de Lazer</a></li>
+            <li><a href="#" onclick="alterarComodo('Sala de Jantar')">Sala de Jantar</a></li>
+        </ul>
+    </nav>
+
+    <h1 id="titulo-comodo">Sala</h1>
+
+    <!-- Usuários -->
+    <div class="item">
+        <label for="usuario">Selecione o Usuário:</label>
+        
+        <select id="usuario">
+            <option value="1">Lavinia Viani</option>
+            <option value="2">Luise Segatto</option>
+            <option value="3">Maria Luiza</option>
+            <option value="4">Miel Velazquez</option>
+            <option value="5">Maria Luiza</option>
+            <option value="5">Rafael Tomasetti</option>            
+
+        </select>
+    </div>
+
+    <div class="item">
+        <label for="equipamento">Selecione o Equipamento:</label>
+        <select id="equipamento">
+            <!-- vazio -->
+        </select>
+    </div>
+
+    <!-- Inserir Dados -->
+    <div class="item">
+        <label for="quantidade">Quantidade de Equipamentos:</label>
+        <input type="number" id="quantidade" value="1">
+    </div>
+
+    <div class="item">
+        <label for="horas">Tempo de Uso Diário (em horas):</label>
+        <input type="number" id="horas" value="4">
+    </div>
+
+    <!-- Seção de Bandeiras Tarifárias -->
+    <div class="item">
+        <label for="bandeira">Selecione a Bandeira Tarifária:</label>
+        <select id="bandeira">
+            <option value="0.50">Verde - R$ 0,50/kWh</option>
+            <option value="0.93">Amarela - R$ 0,93/kWh</option>
+            <option value="1.50">Vermelha - R$ 1,50/kWh</option>
+        </select>
+    </div>
+
+    <!-- Botão de Cálculo -->
+    <button onclick="calcularConsumo()">Calcular Consumo</button>
+
+    <!-- Exibição do Resultado -->
+    <div class="resultado" id="resultado"></div>
+
+    <script>
+        // Lista de equipamentos por cômodo
+        const equipamentosPorComodo = {
+            Sala: [
+                { nome: 'Televisão', potencia: 150 },
+                { nome: 'Computador', potencia: 100 },
+                { nome: 'Ventilador', potencia: 75 }
+            ],
+            Cozinha: [
+                { nome: 'Geladeira', potencia: 150 },
+                { nome: 'Microondas', potencia: 1200 },
+                { nome: 'Liquidificador', potencia: 500 }
+            ],
+            Banheiro: [
+                { nome: 'Chuveiro', potencia: 5500 },
+                { nome: 'Secador de Cabelo', potencia: 1300 }
+            ]
+        };
+
+        // Função para alterar o cômodo e atualizar equipamentos
+        function alterarComodo(comodo) {
+            document.getElementById('titulo-comodo').textContent = comodo;
+            const selectEquipamento = document.getElementById('equipamento');
+            selectEquipamento.innerHTML = '';
+
+            equipamentosPorComodo[comodo].forEach(equip => {
+                const option = document.createElement('option');
+                option.value = equip.potencia;
+                option.textContent = `${equip.nome} - ${equip.potencia}W`;
+                selectEquipamento.appendChild(option);
+            });
+        }
+
+        // calcular o consumo
+        function calcularConsumo() {
+            const potencia = parseFloat(document.getElementById('equipamento').value);
+            const quantidade = parseInt(document.getElementById('quantidade').value);
+            const horas = parseFloat(document.getElementById('horas').value);
+            const bandeira = parseFloat(document.getElementById('bandeira').value);
+
+            if (isNaN(potencia) || isNaN(quantidade) || isNaN(horas) || isNaN(bandeira)) {
+                document.getElementById('resultado').textContent = "Por favor, preencha todos os campos corretamente.";
+                return;
+            }
+
+            const consumoDiario = (potencia * quantidade * horas) / 1000;
+            const consumoMensal = consumoDiario * 30;
+            const custoMensal = consumoMensal * bandeira;
+
+            document.getElementById('resultado').textContent =
+                `Consumo Diário: ${consumoDiario.toFixed(2)} kWh | Consumo Mensal: ${consumoMensal.toFixed(2)} kWh | Custo Mensal: R$ ${custoMensal.toFixed(2)}`;
+        }
+
+        alterarComodo('Sala');
+    </script>
+
+</body>
+</html>
